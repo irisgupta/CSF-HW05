@@ -20,11 +20,14 @@ int main(int argc, char **argv) {
 
   Connection conn;
 
-  // TODO: connect to server
-
+  // Connect to server
+  int connfd = open_clientfd((char *)server_hostname, (char *)server_port);
+  
   // TODO: send rlogin and join messages (expect a response from
   //       the server for each one)
-
+  writestr(connfd, "rlogin:");
+  writestr(connfd, username);
+  
   // TODO: loop waiting for messages from server
   //       (which should be tagged with TAG_DELIVERY)
 
