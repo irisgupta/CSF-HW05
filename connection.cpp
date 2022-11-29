@@ -20,7 +20,7 @@ Connection::Connection(int fd)
 void Connection::connect(const std::string &hostname, int port) {
   // TODO: call open_clientfd to connect to the server
   std::string portString = std::to_string(port);
-  m_fd = open_clientfd(hostname.c_str(), portString.c_str()); 
+  m_fd = open_clientfd(hostname, portString); 
   // TODO: call rio_readinitb to initialize the rio_t object
   rio_readinitb(&m_fdbuffer, m_fd);
 }
@@ -55,8 +55,7 @@ bool Connection::send(const Message &msg) {
     std::stringstream ss; 
     ss << msg.tag << ":" << msg.data << "\n"; 
     std::string message = ss.str(); 
-    const char * c_str = message.c_str();
-    if (rio_writen(m_fd, c_str, message.length()) == -1) {
+    if (rio_writen(m_fd, message, message.length()) == -1) {
       m_last_result = EOF_OR_ERROR;
       return false;
     }
@@ -70,7 +69,7 @@ bool Connection::receive(Message &msg) {
   // return true if successful, false if not
   // make sure that m_last_result is set appropriately
   char store[msg.MAX_LEN];
-  int newRead = Rio_readlineb(&m_fdbuf, store, msg.MAX_LEN);
+  int newRead = Rio_readlineb(&m_fdbuffer, store, msg.MAX_LEN);
   if (newRead < 0) {
     m_last_result = EOF_OR_ERROR;
     return false;
