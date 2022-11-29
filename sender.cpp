@@ -42,34 +42,35 @@ int main(int argc, char **argv) {
   //       server as appropriate
 
   while (1) { 
-   std::string text;
-   getline(std::cin, text);
-   std::string payload;
-   std::string command;
-   std::stringstream ss;
-   ss << text;
-   ss >> command; 
-  if (command == "/join") {
-    ss >> payload;
-    connection.send(Message(TAG_JOIN, payload));
-    connnection.receive(message);
-    if (message.tag == TAG_ERR) {
-      std::cerr << message.data  << "\n";
-    }
-  } else if (command == "/leave") {
+    std::string text;
+    getline(std::cin, text);
+    std::string payload;
+    std::string command;
+    std::stringstream ss;
+    ss << text;
+    ss >> command;
+
+    if (command == "/join") {
+      ss >> payload;
+      connection.send(Message(TAG_JOIN, payload));
+      connnection.receive(message);
+      if (message.tag == TAG_ERR) {
+        std::cerr << message.data << "\n";
+      }
+    } else if (command == "/leave") {
       connection.send(Message(TAG_LEAVE, ""));
       connection.receive(message);
       if (message.tag == TAG_ERR) {
         std::cerr << payload << "\n";
       }
-  } else if (command == "/quit") {
+    } else if (command == "/quit") {
       connection.send(Message(TAG_QUIT, ""));
       connection.receive(message);
       if (message.tag == TAG_ERR) {
-        std::cerr << "Thank you!" << "\n";
+        std::cerr << payload << "\n";
       }
       return 0;
-  } else { 
+    } else { 
       connection.send(Message(TAG_SENDALL, text));
       connection.receive(message);
       if (message.tag == TAG_ERR) {
