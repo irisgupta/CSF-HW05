@@ -68,21 +68,20 @@ bool Connection::receive(Message &msg) {
   // TODO: receive a message, storing its tag and data in msg
   // return true if successful, false if not
   // make sure that m_last_result is set appropriately
-  char store[msg.MAX_LEN];
-  int newRead = Rio_readlineb(&m_fdbuffer, store, msg.MAX_LEN);
+  char temp[msg.MAX_LEN];
+  int newRead = rio_readlineb(&m_fdbuffer, temp, msg.MAX_LEN);
   if (newRead < 0) {
     m_last_result = EOF_OR_ERROR;
     return false;
   }
-  std::string result = store;
+  std::string result = temp;
   if (result[result.length()-1] == '\n') {
   result.erase(result.length()-1);
   }
-  int index = 0;
-  std::size_t colonLocation = result.find(":");
-  if (colonLocation != std::string::npos) {
-    msg.tag = result.substr(0,colon);                                                                                                                                                                       
-    msg.data = result.substr(colon + 1);                                                                                                                                
+  std::size_t colonIndex = result.find(":");
+  if (colonIndex != std::string::npos) {
+    msg.tag = result.substr(0,colonIndex);
+    msg.data = result.substr(colonIndex + 1);
     m_last_result = SUCCESS; 
   } else {
     std::cerr << "Error: invalid message format";
