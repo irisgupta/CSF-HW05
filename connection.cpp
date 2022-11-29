@@ -14,7 +14,7 @@ Connection::Connection(int fd)
   : m_fd(fd)
   , m_last_result(SUCCESS) {
   // TODO: call rio_readinitb to initialize the rio_t object
-  rio_readinitb(&m_fdbuffer, fd); 
+  rio_readinitb(&m_fdbuffer, fd);
 }
 
 void Connection::connect(const std::string &hostname, int port) {
@@ -74,14 +74,14 @@ bool Connection::receive(Message &msg) {
     m_last_result = EOF_OR_ERROR;
     return false;
   }
-  std::string result = temp;
-  if (result[result.length()-1] == '\n') {
-  result.erase(result.length()-1);
+  std::string message = temp;
+  if (message[message.length()-1] == '\n') {
+    message = message.substr(0, message.length()-1);
   }
-  std::size_t colonIndex = result.find(":");
+  std::size_t colonIndex = message.find(":");
   if (colonIndex != std::string::npos) {
-    msg.tag = result.substr(0,colonIndex);
-    msg.data = result.substr(colonIndex + 1);
+    msg.tag = message.substr(0,colonIndex);
+    msg.data = message.substr(colonIndex + 1);
     m_last_result = SUCCESS; 
   } else {
     std::cerr << "Error: invalid message format";
