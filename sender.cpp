@@ -78,6 +78,6 @@ int main(int argc, char **argv) {
       }
     }
   }
-  conn.close();
+  connection.close();
   return 0;
 }
