@@ -1,6 +1,7 @@
 #include <sstream>
 #include <cctype>
 #include <cassert>
+#include <iostream>
 #include "csapp.h"
 #include "message.h"
 #include "connection.h"
@@ -14,15 +15,16 @@ Connection::Connection(int fd)
   : m_fd(fd)
   , m_last_result(SUCCESS) {
   // TODO: call rio_readinitb to initialize the rio_t object
-  rio_readinitb(&m_fdbuffer, fd);
+  rio_readinitb(&m_fdbuf, fd);
 }
 
 void Connection::connect(const std::string &hostname, int port) {
   // TODO: call open_clientfd to connect to the server
-  std::string portString = std::to_string(port);
-  m_fd = open_clientfd(hostname, portString); 
+  char * portString = (char *)(std::to_string(port)).c_str();
+  char * hostnameString = (char *) hostname.c_str();
+  m_fd = open_clientfd(hostnameString, portString);
   // TODO: call rio_readinitb to initialize the rio_t object
-  rio_readinitb(&m_fdbuffer, m_fd);
+  rio_readinitb(&m_fdbuf, m_fd);
 }
 
 Connection::~Connection() {
@@ -55,6 +57,7 @@ bool Connection::send(const Message &msg) {
     std::stringstream ss; 
     ss << msg.tag << ":" << msg.data << "\n"; 
     std::string message = ss.str(); 
+    char * messageString = (char *) message.c_str();
     if (rio_writen(m_fd, message, message.length()) == -1) {
       m_last_result = EOF_OR_ERROR;
       return false;
@@ -62,6 +65,7 @@ bool Connection::send(const Message &msg) {
     m_last_result = SUCCESS;
     return true;
   }
+  return false;
 }
 
 bool Connection::receive(Message &msg) {
@@ -69,7 +73,7 @@ bool Connection::receive(Message &msg) {
   // return true if successful, false if not
   // make sure that m_last_result is set appropriately
   char temp[msg.MAX_LEN];
-  int newRead = rio_readlineb(&m_fdbuffer, temp, msg.MAX_LEN);
+  int newRead = rio_readlineb(&m_fdbuf, temp, msg.MAX_LEN);
   if (newRead < 0) {
     m_last_result = EOF_OR_ERROR;
     return false;
