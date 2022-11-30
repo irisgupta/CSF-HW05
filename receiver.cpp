@@ -62,8 +62,8 @@ int main(int argc, char **argv) {
         break;
       }
     } else {
-      std::cerr << message.data << "\n";
-      return 1;
+      std::cerr << "Could not receive message" << std::endl;
+      return 0;
     }
 
   }
