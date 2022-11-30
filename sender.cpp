@@ -53,7 +53,7 @@ int main(int argc, char **argv) {
     if (command == "/join") {
       ss >> payload;
       connection.send(Message(TAG_JOIN, payload));
-      connnection.receive(message);
+      connection.receive(message);
       if (message.tag == TAG_ERR) {
         std::cerr << message.data << "\n";
       }
