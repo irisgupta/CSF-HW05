@@ -61,20 +61,20 @@ int main(int argc, char **argv) {
       connection.send(Message(TAG_LEAVE, ""));
       connection.receive(message);
       if (message.tag == TAG_ERR) {
-        std::cerr << payload << "\n";
+        std::cerr << message.data << "\n";
       }
     } else if (command == "/quit") {
       connection.send(Message(TAG_QUIT, ""));
       connection.receive(message);
       if (message.tag == TAG_ERR) {
-        std::cerr << payload << "\n";
+        std::cerr << message.data << "\n";
       }
       return 0;
-    } else { 
+    } else {
       connection.send(Message(TAG_SENDALL, text));
       connection.receive(message);
       if (message.tag == TAG_ERR) {
-	      std::cerr << payload << "\n";
+	      std::cerr << message.data << "\n";
       }
     }
   }
