@@ -1,3 +1,10 @@
+/*
+ * Functions for the connection class to facilitate client/server interaction
+ * CSF Assignment 5
+ * Iris Gupta and Eric Wang
+ * igupta5@jhu.edu and ewang42@jhu.edu
+ */
+
 #include <sstream>
 #include <cctype>
 #include <cassert>
@@ -6,11 +13,20 @@
 #include "message.h"
 #include "connection.h"
 
+/*
+ * Default constructor of the Connection class
+ */
 Connection::Connection()
   : m_fd(-1)
   , m_last_result(SUCCESS) {
 }
 
+/*
+ * Non-default constructor of the Connection class
+ *
+ * Parameters:
+ *   fd - int file descriptor
+ */
 Connection::Connection(int fd)
   : m_fd(fd)
   , m_last_result(SUCCESS) {
@@ -18,6 +34,13 @@ Connection::Connection(int fd)
   rio_readinitb(&m_fdbuf, fd);
 }
 
+/*
+ * Connect to a server given a hostname and port
+ *
+ * Parameters:
+ *   hostname - reference to string hostname
+ *   port - integer representing port number
+ */
 void Connection::connect(const std::string &hostname, int port) {
   // TODO: call open_clientfd to connect to the server
   char * portString = (char *)(std::to_string(port)).c_str();
@@ -27,6 +50,9 @@ void Connection::connect(const std::string &hostname, int port) {
   rio_readinitb(&m_fdbuf, m_fd);
 }
 
+/*
+ * Destructor for the class Connection
+ */
 Connection::~Connection() {
   // TODO: close the socket if it is open
   if (is_open()) {
@@ -34,14 +60,23 @@ Connection::~Connection() {
   }
 }
 
+/*
+ * Determine whether or not a connection is open
+ *
+ * Returns:
+ *   boolean to represent if the connection is open or not
+ */
 bool Connection::is_open() const {
   // TODO: return true if the connection is open
-  if (m_fd < 0 ) {
+  if (m_fd < 0) {
     return false;
   }
   return true;
 }
 
+/*
+ * Close a connection
+ */
 void Connection::close() {
   // TODO: close the connection if it is open
   if (is_open()) {
@@ -49,6 +84,15 @@ void Connection::close() {
   }
 }
 
+/*
+ * Send a message via a connection
+ *
+ * Parameters:
+ *   msg - reference to a Message
+ *
+ * Returns:
+ *   boolean to indicate if a connection send is successful
+ */
 bool Connection::send(const Message &msg) {
   // TODO: send a message
   // return true if successful, false if not
@@ -68,6 +112,15 @@ bool Connection::send(const Message &msg) {
   return false;
 }
 
+/*
+ * Receive a message via a connection
+ *
+ * Parameters:
+ *   msg - reference to a Message
+ *
+ * Returns:
+ *   boolean to indicate if a connection receive is successful
+ */
 bool Connection::receive(Message &msg) {
   // TODO: receive a message, storing its tag and data in msg
   // return true if successful, false if not

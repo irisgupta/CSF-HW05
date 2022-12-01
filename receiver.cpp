@@ -1,3 +1,10 @@
+/*
+ * Implementation of the receiver client
+ * CSF Assignment 5
+ * Iris Gupta and Eric Wang
+ * igupta5@jhu.edu and ewang42@jhu.edu
+ */
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -7,6 +14,19 @@
 #include "connection.h"
 #include "client_util.h"
 
+/*
+ * Have the receiver client connect to a server, send
+ * login and join messages to the server, and await
+ * messages from the server in a loop
+ *
+ * Parameters:
+ *   argc - integer number of command line arguments
+ *   argv - character array containing each command line argument
+ *
+ * Returns:
+ *   an integer (either 1 or 0) to represent success/failure of the
+ *   program
+ */
 int main(int argc, char **argv) {
   if (argc != 5) {
     std::cerr << "Usage: ./receiver [server_address] [port] [username] [room]\n";
@@ -67,7 +87,6 @@ int main(int argc, char **argv) {
     }
 
   }
-
   conn.close();
   return 0;
 }

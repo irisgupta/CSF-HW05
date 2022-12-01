@@ -1,3 +1,10 @@
+/*
+ * Implementation of the sender client
+ * CSF Assignment 5
+ * Iris Gupta and Eric Wang
+ * igupta5@jhu.edu and ewang42@jhu.edu
+ */
+
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -7,6 +14,19 @@
 #include "connection.h"
 #include "client_util.h"
 
+/*
+ * Have the sender client connect to a server, send
+ * a login message to the server, and send multiple
+ * commands to the server
+ *
+ * Parameters:
+ *   argc - integer number of command line arguments
+ *   argv - character array containing each command line argument
+ *
+ * Returns:
+ *   an integer (either 1 or 0) to represent success/failure of the
+ *   program
+ */
 int main(int argc, char **argv) {
   if (argc != 4) {
     std::cerr << "Usage: ./sender [server_address] [port] [username]\n";
