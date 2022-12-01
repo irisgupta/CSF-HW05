@@ -58,7 +58,7 @@ bool Connection::send(const Message &msg) {
     ss << msg.tag << ":" << msg.data << "\n"; 
     std::string message = ss.str(); 
     char * messageString = (char *) message.c_str();
-    if (rio_writen(m_fd, message, message.length()) == -1) {
+    if (rio_writen(m_fd, messageString, message.length()) == -1) {
       m_last_result = EOF_OR_ERROR;
       return false;
     }
