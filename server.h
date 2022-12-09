@@ -16,6 +16,8 @@ public:
   void handle_client_requests();
 
   Room *find_or_create_room(const std::string &room_name);
+  void receiver_interaction(Connection *conn, Server *server, Message msg, std::string username);
+  std::sender_interaction(Connection *conn, Server *server, Message msg, std::string username);
 
 private:
   // prohibit value semantics
