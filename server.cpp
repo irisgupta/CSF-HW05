@@ -56,11 +56,11 @@ void *worker(void *arg) {
     }
     return nullptr;
   }
-  if (message.tag != TAG_RLOGIN && message.tag != TAG_SLOGIN) {
-    dataPointer->connection->send(Message(TAG_ERR, "slogin or rlogin required!"));
+  if (!dataPointer->connection->send(Message(TAG_OK, "Hello, " + message.data))) {
     return nullptr;
   }
-  if (!dataPointer->connection->send(Message(TAG_OK, "Hello, " + message.data))) {
+  if (message.tag != TAG_RLOGIN && message.tag != TAG_SLOGIN) {
+    dataPointer->connection->send(Message(TAG_ERR, "slogin or rlogin required!"));
     return nullptr;
   }
 
@@ -74,6 +74,9 @@ void *worker(void *arg) {
   if (message.tag == TAG_SLOGIN) {
     client = "sender";
   }
+  else if (message.tag == TAG_RLOGIN) {
+    client = "receiver";
+  }
   
   while (true) {
     if (!dataPointer->connection->receive(message)) {
@@ -82,19 +85,18 @@ void *worker(void *arg) {
       }
       break;
     } else {
-      if (client == "sender") {
+      if (client == "receiver") {
+        dataPointer->server->receiver_interaction(dataPointer->connection, dataPointer->server, message, message.data);
+      } else if (client == "sender") {
         roomName = dataPointer->server->sender_interaction(dataPointer->connection, dataPointer->server, message, message.data);
         if (roomName == "quit") {
           return nullptr;
         }
-      } else {
-        dataPointer->server->receiver_interaction(dataPointer->connection, dataPointer->server, message, message.data);
       }
     }
   }
   return nullptr;
 }
-
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -104,13 +106,14 @@ void Server::receiver_interaction(Connection *connection, Server *server, Messag
   User member(message.data);
   std::string roomName = "";
   Room *room;
+  Message *messageOngoing;
+
   if (message.tag == TAG_JOIN) {
-    roomName = message.data; 
     connection->send(Message(TAG_OK, "Okay!"));
+    roomName = message.data; 
     room = server->find_or_create_room(roomName);
     room->add_member(&member);
   }
-  Message *messageOngoing;
   while (true) {
     messageOngoing = member.mqueue.dequeue(); 
     connection->send(*messageOngoing);
@@ -121,11 +124,12 @@ void Server::receiver_interaction(Connection *connection, Server *server, Messag
 std::string Server::sender_interaction(Connection *connection, Server *server, Message message, std::string username) {
   Room *room;
   std::string roomName = "";
+
   while(true) {
     if (message.tag == TAG_JOIN) { 
-      room = server->find_or_create_room(message.data);
       roomName = room->get_room_name();
       connection->send(Message(TAG_OK, "Okay!"));
+      room = server->find_or_create_room(message.data);
     } else if (message.tag == TAG_QUIT) {
       connection->send(Message(TAG_OK, "Time to quit!"));
       roomName = "quit";
@@ -141,8 +145,8 @@ std::string Server::sender_interaction(Connection *connection, Server *server, M
       if(roomName == "") { 
         connection->send(Message(TAG_ERR, "Invalid room!"));
       } else {
-        room->broadcast_message(username, message.data);
         connection->send(Message(TAG_OK, "Okay!"));
+        room->broadcast_message(username, message.data);
       }
     } else {
       connection->send(Message(TAG_ERR, "Invalid tag!"));
@@ -168,8 +172,8 @@ Server::~Server() {
 bool Server::listen() {
   // TODO: use open_listenfd to create the server socket, return true
   //       if successful, false if not
-  std::string port = std::to_string(m_port);
-  m_ssock = open_listenfd(port.c_str());
+  std::string portName = std::to_string(m_port);
+  m_ssock = open_listenfd(portName.c_str());
   if (m_ssock > 0) {
     return true;
   }
@@ -181,7 +185,10 @@ bool Server::listen() {
 void Server::handle_client_requests() {
   // TODO: infinite loop calling accept or Accept, starting a new
   //       pthread for each connected client
-  while (true && m_ssock >= 0) {
+  if (m_ssock < 0 ) {
+    return;
+  }
+  while (true) {
     int clientfd = accept(m_ssock, nullptr, nullptr);
     if (clientfd < 0) {
       std::cerr << "Connection not accepted!\n";
