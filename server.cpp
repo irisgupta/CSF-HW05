@@ -187,7 +187,7 @@ void Server::handle_client_requests() {
       std::cerr << "Connection not accepted!\n";
       return;
     }
-    ConnectionData *data = new ConnectionData(new Connection(clientfd), this);
+    ConnectionData *data = new ConnectionData(this, new Connection(clientfd));
     pthread_t thr_id;
     if (pthread_create(&thr_id, nullptr, worker, static_cast<void *>(data)) != 0) {
       std::cerr << "Error creating thread!\n";
