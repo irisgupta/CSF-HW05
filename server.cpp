@@ -27,7 +27,7 @@
 struct ConnectionData {
   Server *server;
   Connection *connection;
-  ConnectionData(Connection *connection, Server *server) : connection(connection), server(server) {}
+  ConnectionData(Server *server, Connection *connection) : server(server), connection(connection) {}
   ~ConnectionData() {
     delete connection;
   }
