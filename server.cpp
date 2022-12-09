@@ -100,7 +100,7 @@ void *worker(void *arg) {
 ////////////////////////////////////////////////////////////////////////
 // Server member function implementation
 ////////////////////////////////////////////////////////////////////////
-void Server::receiver_interaction(Message message, std::string username, Server *server, Connection *connection) {
+void Server::receiver_interaction(Connection *connection, Server *server, Message message, std::string username) {
   User member(message.data);
   std::string roomName = "";
   Room *room;
@@ -118,7 +118,7 @@ void Server::receiver_interaction(Message message, std::string username, Server 
   room->remove_member(&member);
 }
 
-std::string Server::sender_interaction(Connection *conn, Server *server, Message msg, std::string username) {
+std::string Server::sender_interaction(Connection *connection, Server *server, Message message, std::string username) {
   Room *room;
   std::string roomName = "";
   while(true) {
