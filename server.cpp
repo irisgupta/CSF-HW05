@@ -69,7 +69,7 @@ void *worker(void *arg) {
   //       separate helper functions for each of these possibilities
   //       is a good idea)
 
-  std::string room = "";
+  std::string roomName = "";
   std::string client = "";
   if (message.tag == TAG_SLOGIN) {
     client = "sender";
