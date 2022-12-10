@@ -56,7 +56,7 @@ void *worker(void *arg) {
     }
     return nullptr;
   }
-  if (!dataPointer->connection->send(Message(TAG_OK, "Hello, " + message.data))) {
+  if (!dataPointer->connection->send(Message(TAG_OK, "Logged in as " + message.data))) {
     return nullptr;
   }
   if (message.tag != TAG_RLOGIN && message.tag != TAG_SLOGIN) {
@@ -109,10 +109,10 @@ void Server::receiver_interaction(Connection *connection, Server *server, Messag
   Message *messageOngoing;
 
   if (message.tag == TAG_JOIN) {
-    connection->send(Message(TAG_OK, "Okay!"));
     roomName = message.data; 
     room = server->find_or_create_room(roomName);
     room->add_member(&member);
+    connection->send(Message(TAG_OK, "Welcome!"));
   }
   while (true) {
     messageOngoing = member.mqueue.dequeue(); 
@@ -128,8 +128,8 @@ std::string Server::sender_interaction(Connection *connection, Server *server, M
   while(true) {
     if (message.tag == TAG_JOIN) { 
       roomName = message.data();
-      connection->send(Message(TAG_OK, "Okay!"));
       room = server->find_or_create_room(roomName);
+      connection->send(Message(TAG_OK, "Joined room " + roomName));
     } else if (message.tag == TAG_QUIT) {
       connection->send(Message(TAG_OK, "Time to quit!"));
       roomName = "quit";
