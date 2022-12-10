@@ -44,9 +44,8 @@ Message *MessageQueue::dequeue() {
     return nullptr;
   }
   // TODO: remove the next message from the queue, return it
-  Message *msg = nullptr;
   pthread_mutex_lock(&m_lock);
-  msg = m_messages.front();
+  Message *msg = m_messages.front();
   m_messages.pop_front();
   pthread_mutex_unlock(&m_lock);
   return msg;
