@@ -50,6 +50,7 @@ void *worker(void *arg) {
   //       TAG_SLOGIN or TAG_RLOGIN), send response
 
   Message message;
+  std::string username = message.data;
   if (!dataPointer->connection->receive(message)) {
     if (dataPointer->connection->get_last_result() == Connection::INVALID_MSG) {
       dataPointer->connection->send(Message(TAG_ERR, "Invalid message!"));
@@ -60,7 +61,7 @@ void *worker(void *arg) {
     dataPointer->connection->send(Message(TAG_ERR, "slogin or rlogin required!"));
     return nullptr;
   }
-  if (!dataPointer->connection->send(Message(TAG_OK, "Logged in as " + message.data))) {
+  if (!dataPointer->connection->send(Message(TAG_OK, "Logged in as " + username))) {
     return nullptr;
   }
 
@@ -86,9 +87,9 @@ void *worker(void *arg) {
       break;
     } else {
       if (client == "receiver") {
-        dataPointer->server->receiver_interaction(dataPointer->connection, dataPointer->server, message, message.data);
+        dataPointer->server->receiver_interaction(dataPointer->connection, dataPointer->server, message, username);
       } else if (client == "sender") {
-        roomName = dataPointer->server->sender_interaction(dataPointer->connection, dataPointer->server, message, message.data);
+        roomName = dataPointer->server->sender_interaction(dataPointer->connection, dataPointer->server, message, username);
         if (roomName == "quit") {
           return nullptr;
         }
