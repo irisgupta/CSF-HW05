@@ -39,7 +39,7 @@ Message *MessageQueue::dequeue() {
 
   // TODO: call sem_timedwait to wait up to 1 second for a message
   //       to be available, return nullptr if no message is available
-  sem_timedwait(&m_lock, &ts);
+  sem_timedwait(&m_avail, &ts);
   if (m_messages.empty()) {
     return nullptr;
   }
