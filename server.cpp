@@ -56,11 +56,11 @@ void *worker(void *arg) {
     }
     return nullptr;
   }
-  if (!dataPointer->connection->send(Message(TAG_OK, "Logged in as " + message.data))) {
-    return nullptr;
-  }
   if (message.tag != TAG_RLOGIN && message.tag != TAG_SLOGIN) {
     dataPointer->connection->send(Message(TAG_ERR, "slogin or rlogin required!"));
+    return nullptr;
+  }
+  if (!dataPointer->connection->send(Message(TAG_OK, "Logged in as " + message.data))) {
     return nullptr;
   }
 
