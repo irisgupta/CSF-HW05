@@ -145,7 +145,7 @@ std::string Server::sender_interaction(Connection *connection, Server *server, M
       if(roomName == "") { 
         connection->send(Message(TAG_ERR, "Invalid room!"));
       } else {
-        connection->send(Message(TAG_OK, "Okay!"));
+        connection->send(Message(TAG_OK, "Message sent!"));
         room->broadcast_message(username, message.data);
       }
     } else {
