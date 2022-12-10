@@ -127,9 +127,9 @@ std::string Server::sender_interaction(Connection *connection, Server *server, M
 
   while(true) {
     if (message.tag == TAG_JOIN) { 
-      roomName = room->get_room_name();
+      roomName = message.data();
       connection->send(Message(TAG_OK, "Okay!"));
-      room = server->find_or_create_room(message.data);
+      room = server->find_or_create_room(roomName);
     } else if (message.tag == TAG_QUIT) {
       connection->send(Message(TAG_OK, "Time to quit!"));
       roomName = "quit";
