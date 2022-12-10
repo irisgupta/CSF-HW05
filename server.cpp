@@ -115,8 +115,10 @@ void Server::receiver_interaction(Connection *connection, Server *server, Messag
     connection->send(Message(TAG_OK, "Welcome!"));
   }
   while (true) {
-    messageOngoing = member.mqueue.dequeue(); 
-    connection->send(*messageOngoing);
+    messageOngoing = member.mqueue.dequeue();
+    if (messageOngoing != nullptr) {
+      connection->send(*messageOngoing);
+    }
   }
   room->remove_member(&member);
 }

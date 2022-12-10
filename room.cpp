@@ -32,7 +32,7 @@ void Room::broadcast_message(const std::string &sender_username, const std::stri
   Guard g(lock);
   std::string message = room_name + ":" + sender_username + ":" + message_text;
   for (User *member : members) {
-    if (member->username.compare(sender_username) != 0) {
+    if (member->username != sender_username) {
       Message *sent = new Message(TAG_DELIVERY, message);
       member->mqueue.enqueue(sent);
     }
