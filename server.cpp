@@ -50,7 +50,6 @@ void *worker(void *arg) {
   //       TAG_SLOGIN or TAG_RLOGIN), send response
 
   Message message;
-  std::string username = message.data;
   if (!dataPointer->connection->receive(message)) {
     if (dataPointer->connection->get_last_result() == Connection::INVALID_MSG) {
       dataPointer->connection->send(Message(TAG_ERR, "Invalid message!"));
@@ -61,6 +60,7 @@ void *worker(void *arg) {
     dataPointer->connection->send(Message(TAG_ERR, "slogin or rlogin required!"));
     return nullptr;
   }
+  std::string username = message.data;
   if (!dataPointer->connection->send(Message(TAG_OK, "Logged in as " + username))) {
     return nullptr;
   }
